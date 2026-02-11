@@ -12,3 +12,8 @@ sudo zpool create \
 ```
 
 Verify that the drive works: `zpool status SharedFilesBackup`
+
+## Connect / Disconnect to the ZFS
+
+Execute the `zfs.sh connect|disconnect` shell script.
+The Filesystem should be visible under `/mnt/openzfs`
