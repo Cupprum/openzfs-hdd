@@ -35,6 +35,7 @@ case "$1" in
       Linux)
         sudo groupadd -g 2000 zfs-share
         sudo usermod -aG zfs-share $USER
+        echo "- Reboot the system for the group assignment to start working properly..."
         ;;
       *)
         echo "Invalid system: $(uname)"
