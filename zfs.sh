@@ -10,14 +10,14 @@ case "$1" in
     MOUNTPOINT=""
     case "$(uname)" in
       Darwin)
-        MOUNTPOINT="/Users/$USER/openzfs"
+        MOUNTPOINT="/Users/$USER/openzfs/$POOL"
         ;;
       Linux)
-        MOUNTPOINT="/mnt/openzfs"
+        MOUNTPOINT="/mnt/openzfs/$POOL"
         ;;
     esac
 
-    sudo zfs mount -o mountpoint="$MOUNTPOINT" $POOL || exit 1
+    sudo zfs set mountpoint=$MOUNTPOINT $POOL || exit 1
     echo "- $POOL is now unlocked and mounted in folder $MOUNTPOINT."
     ;;
   disconnect)
