@@ -10,7 +10,7 @@ case "$1" in
     MOUNTPOINT=""
     case "$(uname)" in
       Darwin)
-        MOUNTPOINT="/Users/$USER/x42/openzfs"
+        MOUNTPOINT="/Users/$USER/openzfs"
         ;;
       Linux)
         MOUNTPOINT="/mnt/openzfs"
