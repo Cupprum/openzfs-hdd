@@ -6,14 +6,26 @@ case "$1" in
   connect)
     sudo zpool import $POOL
     sudo zfs load-key $POOL
-    sudo zfs mount -o mountpoint=/Users/x42/openzfs $POOL || exit 1
-    echo "- $POOL is now unlocked and mounted."
+
+    MOUNTPOINT=""
+    case "$(uname)" in
+      Darwin)
+        MOUNTPOINT="/Users/$USER/x42/openzfs"
+        ;;
+      Linux)
+        MOUNTPOINT="/mnt/openzfs"
+        ;;
+    esac
+
+    sudo zfs mount -o mountpoint="$MOUNTPOINT" $POOL || exit 1
+    echo "- $POOL is now unlocked and mounted in folder $MOUNTPOINT."
     ;;
   disconnect)
     sudo zpool export $POOL || exit 1
     echo "- $POOL safely exported and locked."
     ;;
   setup-group)
+    echo "- Creating zfs-share group..."
     case "$(uname)" in 
       Darwin)
         sudo dscl . create /Groups/zfs-share
@@ -30,8 +42,25 @@ case "$1" in
         ;;
     esac
     ;;
+  initialize)
+    echo "- Initializing openzfs..."
+
+    if [[ $2 != *"/dev/sd"* ]]; then
+      echo "- Invalid device, use: $0 initialize /dev/sdXY"
+      exit 1
+    fi
+
+    sudo zpool create \
+      -m none \
+      -O encryption=on \
+      -O keyformat=passphrase \
+      SharedFilesBackup /dev/sda2
+    ./zsh.sh setup-group
+    sudo chown "$USER:zfs-share" .
+    echo "- Finished setting up openzfs"
+    ;;
   *)
-    echo "Usage: $0 {connect|disconnect|setup-group}"
+    echo "Usage: $0 {connect|disconnect|setup-group,initialize} [dev]"
     exit 1
     ;;
 esac
